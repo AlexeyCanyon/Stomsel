@@ -18,6 +18,7 @@ public class ResultActivity extends AppCompatActivity {
     WebView webView;
     String winOrLose ;
     TextView cong_text;
+    TextView score;
 
     private final static String TAG = "MainActivity";
 
@@ -35,7 +36,7 @@ public class ResultActivity extends AppCompatActivity {
 
         webView = findViewById(R.id.gifka);
         cong_text = findViewById(R.id.congratulation_text);
-
+        score = findViewById(R.id.score_detail);
 
         Bundle arguments = getIntent().getExtras();
 
@@ -45,13 +46,24 @@ public class ResultActivity extends AppCompatActivity {
             playerScore = arguments.getInt("playerScore");
         }
 
+        if(botScore == playerScore) {
+            winOrLose = "file:///android_asset/tanos.jpg";
+            cong_text.setText("Победила дружба!");
+            String scoreDetail = Integer.toString(playerScore) + " : " + Integer.toString(botScore);
+            score.setText(scoreDetail);
+        }
         if(botScore < playerScore){
             winOrLose = "file:///android_asset/tenor.gif";
             cong_text.setText("Поздравляю! Вы победили!");
+            String scoreDetail = Integer.toString(playerScore) + " : " + Integer.toString(botScore);
+            score.setText(scoreDetail);
         } else {
             winOrLose = "file:///android_asset/ho.gif";
             cong_text.setText("Не расстраивайтесь... В следующий раз повезет!");
+            String scoreDetail = Integer.toString(botScore) + " : " + Integer.toString(playerScore);
+            score.setText(scoreDetail);
         }
+
         webView.loadUrl(winOrLose);
     }
     @Override

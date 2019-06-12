@@ -90,12 +90,16 @@ public class MessageActvity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                msg = text_send.getText().toString();
+                msg = text_send.getText().toString().toLowerCase();
                 if(!msg.equals("")) {
                     if(CheckWordFromUser(msg)) {
-                        String prevWordFromBot = chats.get(chats.size()-1).getMessage();
+                    String prevWordFromBot = "";
+                    if(chats.size() > 1){
+                         prevWordFromBot = chats.get(chats.size()-1).getMessage();
+                    }
+
                         sendMessage(msg,true);
-                        player.count(prevWordFromBot,msg);
+                       player.count(prevWordFromBot,msg);
                         score.setText("Ваши очки: " + Integer.toString(player.getScore()) + "\n" +
                                                         "Очки бота: " + Integer.toString(bot.getScore()));
                         text_send.setText("");
@@ -120,20 +124,20 @@ public class MessageActvity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setTitle("");
-        String wordFromBot = DictionaryWords.startWord();
-        Chat chat = new Chat(wordFromBot,false);
-        chats.add(chat);
-        UpdateChat();
+//        String wordFromBot = DictionaryWords.startWord(getApplicationContext());
+//        Chat chat = new Chat(wordFromBot,false);
+//        chats.add(chat);
+//        UpdateChat();
     }
 
     private Boolean CheckWordFromUser(String message) {
-        if(!DictionaryWords.isWordInDict(message)) {
-            Toast.makeText(MessageActvity.this, "Данного слово не существует", Toast.LENGTH_SHORT).show();
+        if(!DictionaryWords.isWordInDict(message, getApplicationContext())) {
+            Toast.makeText(MessageActvity.this, "Данная комбинация букв не является словом", Toast.LENGTH_SHORT).show();
             text_send.setText("");
             return false;
         }
         if(DictionaryWords.isWordInUsed(message)) {
-            Toast.makeText(MessageActvity.this, "Данного слова уже использовалось", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MessageActvity.this, "Данное слово уже использовалось", Toast.LENGTH_SHORT).show();
             text_send.setText("");
             return false;
         } else {
@@ -145,7 +149,7 @@ public class MessageActvity extends AppCompatActivity {
     private void UpdateChat() {
 
       // Если конец игры то вывести результаты
-        if(chats.size() == 20) {
+        if(chats.size() >= 20) {
             Intent intent = new Intent(MessageActvity.this, ResultActivity.class);
             intent.putExtra("botScore", bot.getScore());
             intent.putExtra("playerScore", player.getScore());
@@ -158,7 +162,7 @@ public class MessageActvity extends AppCompatActivity {
     }
 
     private void sendMessage(String msg, boolean queue) {
-        Chat chat = new Chat(msg,queue);
+        Chat chat = new Chat(msg.toLowerCase(),queue);
         chats.add(chat);
         UpdateChat();
         if(chats.size() < 20) {
@@ -172,7 +176,7 @@ public class MessageActvity extends AppCompatActivity {
     private void sendMessageFromBot(){
         String wordFromBot;
         while (true) {
-            wordFromBot = bot.generateWord(chats.get(chats.size()-1).getMessage());
+            wordFromBot = bot.generateWord(chats.get(chats.size()-1).getMessage(),getApplicationContext());
             if (!DictionaryWords.isWordInUsed(wordFromBot)) {
                 DictionaryWords.addUsedWord(wordFromBot);
                 break;

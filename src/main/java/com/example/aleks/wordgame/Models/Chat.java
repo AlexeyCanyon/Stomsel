@@ -5,7 +5,7 @@ public class Chat {
     Boolean queue;
 
     public Chat(String message, Boolean queue) {
-        this.message = message;
+        this.message = message.toLowerCase();
         this.queue = queue;
     }
 
@@ -18,7 +18,7 @@ public class Chat {
     }
 
     public String getMessage() {
-        return message;
+        return message.toLowerCase();
     }
 
     public void setMessage(String message) {

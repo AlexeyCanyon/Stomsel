@@ -29,22 +29,24 @@ public class DictionaryWords {
     }
 
     // Метод проверяет есть ли данное слово в словаре
-    public static Boolean isWordInDict(String word) {
+    public static Boolean isWordInDict(String word, Context context) {
+        AssetManager assetManager = context.getAssets();
         try {
             String baseDir = Environment.getExternalStorageDirectory()+ File.separator +  "Words";
 
-            FileInputStream fstream = new FileInputStream(baseDir + File.separator + Integer.toString(word.length()) + ".txt");
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            //FileInputStream fstream = new FileInputStream(baseDir + File.separator + Integer.toString(word.length()) + ".txt");
+            InputStreamReader istream = new InputStreamReader(assetManager.open("Words"+ File.separator + Integer.toString(word.length()) + ".txt"));
+            BufferedReader br = new BufferedReader(istream);
             String strLine;
             while ((strLine = br.readLine()) != null){
                 if (word.equals(strLine)) {
                     br.close();
-                    fstream.close();
+                    istream.close();
                     return true;
                 }
             }
             br.close();
-            fstream.close();
+            istream.close();
             return false;
         } catch (IOException ex) {
             Log.i("Ошибка в файле", ex.toString());
@@ -53,23 +55,27 @@ public class DictionaryWords {
     }
 
     // Метод ищет слово в словаре по параметрам
-    public static String findWord(String pattern, int countLetter, int file) {
+    public static String findWord(String pattern, int countLetter, int file, Context context) {
+        AssetManager assetManager = context.getAssets();
         try {
-            String baseDir = Environment.getExternalStorageDirectory()+ File.separator +  "Words";
-            FileInputStream fStream = new FileInputStream(baseDir + File.separator + Integer.toString(file) + ".txt");
+           // String baseDir = Environment.getExternalStorageDirectory()+ File.separator +  "Words";
+           // FileInputStream fStream = new FileInputStream(baseDir + File.separator + Integer.toString(file) + ".txt");
+            //InputStreamReader istream = new InputStreamReader(assetManager.open("Words"+ File.separator + Integer.toString(file) + ".txt"));
+            //final InputStream stream = context.getResources().getAssets().open("");
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(fStream));
+            InputStream istream = context.getResources().getAssets().open("Words"+ File.separator + Integer.toString(file) + ".txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(istream));
             String strLine;
 
             while ((strLine = br.readLine()) != null){
                 if (fromEnd(pattern, countLetter).equals(fromBegin(strLine, countLetter))) {
                     br.close();
-                    fStream.close();
+                    istream.close();
                     return strLine;
                 }
             }
             br.close();
-            fStream.close();
+            istream.close();
             return null;
 
         } catch (IOException ex) {
@@ -79,24 +85,28 @@ public class DictionaryWords {
     }
 
     // Метод генерирует случайное слово длиной 5-8
-    public static String startWord() {
-        String baseDir = Environment.getExternalStorageDirectory()+ File.separator +  "Words";
+    public static String startWord(Context context) {
+
+       // String baseDir = Environment.getExternalStorageDirectory()+ File.separator +  "Words";
+        AssetManager assetManager = context.getAssets();
+
        // String baseDir = "file:///android_asset/Words/";
         Random rnd = new Random();
         int fileNumber = rnd.nextInt(4) + 5;
         try {
-
-            String path = Integer.toString(fileNumber) + ".txt";
-            File f = new File(baseDir +  File.separator + path);
-            FileInputStream fStream = new FileInputStream(f);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fStream));
+            InputStreamReader istream = new InputStreamReader(assetManager.open("Words"+ File.separator + Integer.toString(fileNumber) + ".txt"));
+            //String path = Integer.toString(fileNumber) + ".txt";
+            //File f = new File(baseDir +  File.separator + path);
+            //FileInputStream fStream = new FileInputStream(f);
+            BufferedReader br = new BufferedReader(istream);
             int count = 0;
 
             while ((br.readLine()) != null){
                 count++;
             }
-            fStream.getChannel().position(0);
-            br = new BufferedReader(new InputStreamReader(fStream));
+           // istream.mark(0);
+            //fStream.getChannel().position(0);
+            br = new BufferedReader(istream);
 
             int wordNumber = rnd.nextInt(count) + 1;
             for (int i = 0; i < wordNumber - 1; i++) {
@@ -104,7 +114,7 @@ public class DictionaryWords {
             }
             String word = br.readLine();
             br.close();
-            fStream.close();
+            istream.close();
             return word;
 
         } catch (IOException ex) {

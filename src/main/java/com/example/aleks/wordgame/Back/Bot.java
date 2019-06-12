@@ -1,5 +1,7 @@
 package com.example.aleks.wordgame.Back;
 
+import android.content.Context;
+
 import java.util.Random;
 
 public class Bot {
@@ -19,7 +21,7 @@ public class Bot {
     }
 
     // Метод обращается к словарю и находит в нем слово
-    public String generateWord(String word) {
+    public String generateWord(String word, Context context) {
         int COUNT_FILE = 8;
         interim = howLetter(word.length());
 
@@ -30,7 +32,7 @@ public class Bot {
 
         while (true) {
             for (int i = 0; i < COUNT_FILE; i++) {
-                String newWord = DictionaryWords.findWord(word, interim, filesNumber[i]);
+                String newWord = DictionaryWords.findWord(word, interim, filesNumber[i], context);
                 if (newWord != null)
                     return newWord;
             }
